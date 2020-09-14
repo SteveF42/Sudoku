@@ -16,6 +16,9 @@ class Node:
         self.y = col*width
         self.width = width
         self.color = WHITE
+        self.locked = False
+    def lock(self):
+        self.locked = True
 
     def get_pos(self):
         return (self.row,self.col)
@@ -30,10 +33,11 @@ class Node:
         return (self.row,self.col)
     
     def draw(self,window):
-        font = pygame.font.SysFont('comic sans MS',22)
-        message = font.render(str(self.value),True,BLACK)
         pygame.draw.rect(window,self.color,(self.x,self.y,self.width,self.width))
-        window.blit(message,(self.x + self.width//2.3,self.y + self.width//3))
+        if self.value != 0:
+            font = pygame.font.SysFont('comicsans',38)
+            message = font.render(str(self.value),True,BLACK)
+            window.blit(message,(self.x + self.width//2.3,self.y + self.width//3))
 
     def make_solved(self):
         self.color = GREEN

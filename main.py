@@ -23,9 +23,9 @@ def draw(grid,window):
     display_value(grid,window)
 
     for row in range(ROWS):
-        pygame.draw.line(WINDOW,BLACK,(0,row*gap),(WIDTH,row*gap), 3 if row % 3 == 0 and row != 0 else 1)
+        pygame.draw.line(WINDOW,BLACK,(0,row*gap),(WIDTH,row*gap), 4 if row % 3 == 0 and row != 0 else 1)
         for col in range(ROWS):
-            pygame.draw.line(WINDOW,BLACK,(col*gap,0),(col*gap,WIDTH), 3 if col % 3 == 0 and col != 0 else 1)
+            pygame.draw.line(WINDOW,BLACK,(col*gap,0),(col*gap,WIDTH), 4 if col % 3 == 0 and col != 0 else 1)
 
     pygame.display.update()
 
@@ -93,7 +93,10 @@ def make_puzzle(grid,draw):
             node.make_orange()
             rounds -= 1
             non_empty_sqares_count += 1
-    return
+    for i in grid:
+        for node in i:
+            if node.get_value() != 0:
+                node.lock()
 
 def get_non_empty_squares(grid):
     non_empty_sqares = []
@@ -202,8 +205,12 @@ def game_setup(window):
     clear_grid(grid,lambda: draw(grid,window))
     return grid
 
+
 def main(rows,width):
+    global COUNTER
     grid = game_setup(WINDOW)
+    winning_grid = copy.deepcopy(grid)
+    solve(winning_grid)
 
     run = True
 
@@ -227,12 +234,26 @@ def main(rows,width):
             if event.type == pygame.KEYDOWN:
                 key = event.key - 48 #idk wtf this is ASCII???? but this makes the number start at zero since I only want 0-9
                 if key in range(0,10):
-                    if current_node:
+                    if current_node and not current_node.locked:
                         current_node.set_value(key)
+
                 if event.key == pygame.K_SPACE:
                     solve(grid,lambda: draw(grid,WINDOW))
+                    
                 if event.key == pygame.K_c:
                     grid = game_setup(WINDOW)
+                    winning_grid = copy.deepcopy(grid)
+                    solve(winning_grid)
+                    
+                if event.key == pygame.K_RETURN:
+                    row, col = current_node.get_pos()
+                    other_val = winning_grid[row][col].get_value()
+                    if other_val == current_node.get_value():
+                        current_node.make_solved()
+                        current_node.lock()
+                    else:
+                        current_node.make_solving()
+
 
 
 
