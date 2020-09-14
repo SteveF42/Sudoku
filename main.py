@@ -5,10 +5,11 @@ from random import shuffle
 from node import Node
 
 WIDTH = 650
-WINDOW = pygame.display.set_mode((WIDTH,WIDTH))
-pygame.display.set_caption("Sudoku Solver")
 ROWS = 9
 COUNTER = 0
+RESOLUTION =(WIDTH//ROWS)*ROWS
+WINDOW = pygame.display.set_mode((RESOLUTION,RESOLUTION))
+pygame.display.set_caption("Sudoku Solver")
 
 BLACK=(0,0,0)
 
@@ -70,12 +71,12 @@ def solve_helper(grid):
             node.set_value(0)
     return False
 
-      
+    
 def make_puzzle(grid,draw):
     global COUNTER
     non_empty_squares = get_non_empty_squares(grid)
     non_empty_sqares_count = len(non_empty_squares)
-    rounds = 8
+    rounds = 5
     while rounds > 0 and non_empty_sqares_count > 17:
         draw()
         node = non_empty_squares.pop()
@@ -88,7 +89,6 @@ def make_puzzle(grid,draw):
         grid_copy = copy.deepcopy(grid)
         solve_helper(grid_copy)
         if COUNTER != 1:
-            print('STINKY POOPOO')
             node.set_value(previous_value)
             node.make_orange()
             rounds -= 1
